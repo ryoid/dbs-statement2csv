@@ -80,9 +80,9 @@ export default function Home() {
               /\d+\sof\s\d+/.test(nextStr) ||
               nextStr === "CR"))
         ) {
-          let amount = item.str
+          let amount = item.str.replaceAll(",", "")
           if (nextStr === "CR") {
-            amount = "-" + amount.replaceAll(",", "")
+            amount = "-" + amount
           }
 
           // means current should be amount
