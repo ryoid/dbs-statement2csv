@@ -2,7 +2,7 @@
 
 Convert Credit Card Statement transactions from PDF to CSV.
 
-[View the live app](https://dbs-statement2csv.pages.dev/)
+[View the live app](https://dbs2csv.ryanjc.com/)
 
 ## Developing
 
