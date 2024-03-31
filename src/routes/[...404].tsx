@@ -6,10 +6,7 @@ export default function NotFound() {
       <h1>404: Page not found</h1>
 
       <div>
-        Return to{" "}
-        <A class="text-blue-500 hover:text-blue-600" href="/">
-          home
-        </A>
+        Return to <A href="/">home</A>
       </div>
     </main>
   )

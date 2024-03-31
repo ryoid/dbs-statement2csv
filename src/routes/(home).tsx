@@ -15,7 +15,7 @@ function replaceFilenameExt(filename: string, currentExt: string, newExt: string
   if (lastIndex === -1) {
     throw new Error(`Invalid filename, does not contain ${currentExt} extension`)
   }
-  return filename.substring(0, lastIndex) + newExt + filename.substring(lastIndex)
+  return filename.slice(0, lastIndex) + newExt + filename.slice(lastIndex + currentExt.length)
 }
 
 export default function Home() {
@@ -44,7 +44,7 @@ export default function Home() {
       const textContent = (await page.getTextContent().then((content) => content.items)).filter(
         (item): item is TextItem => "str" in item && item.str !== "" && item.str !== " "
       )
-      
+
       // walk textContent.items.str to find the start header
       for (let j = 0; j < textContent.length; j++) {
         const item = textContent[j]
@@ -146,11 +146,7 @@ export default function Home() {
             <div>
               <div>
                 <h2>Parsed Statement</h2>
-                <a
-                  href={result().url}
-                  download={result().filename}
-                  class="text-blue-500 hover:text-blue-600 py-2 block"
-                >
+                <a href={result().url} download={result().filename} class="py-2 block">
                   Download CSV
                 </a>
 
@@ -170,7 +166,7 @@ export default function Home() {
                   </table>
                 </div>
               </div>
-              <table>
+              <table class="striped">
                 <thead>
                   <tr>
                     <th>Date</th>
@@ -180,13 +176,20 @@ export default function Home() {
                 </thead>
                 <tbody>
                   <For each={result().txs}>
-                    {({ date, desc, amount }) => (
-                      <tr>
-                        <td>{date}</td>
-                        <td>{desc}</td>
-                        <td>{amount}</td>
-                      </tr>
-                    )}
+                    {({ date, desc, amount }) => {
+                      const displayAmount = () => {
+                        const num = Number(amount)
+                        if (isNaN(num)) return amount
+                        return num.toLocaleString()
+                      }
+                      return (
+                        <tr>
+                          <td>{date}</td>
+                          <td>{desc}</td>
+                          <td>{displayAmount()}</td>
+                        </tr>
+                      )
+                    }}
                   </For>
                 </tbody>
               </table>
