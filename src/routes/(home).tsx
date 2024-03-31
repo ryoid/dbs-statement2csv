@@ -1,5 +1,6 @@
 import type { TextItem } from "pdfjs-dist/types/src/display/api"
-import { For, Show, createSignal } from "solid-js"
+import { For, Show, createMemo, createSignal } from "solid-js"
+import { groupCommonWords } from "~/lib/trie"
 
 const START_TX_HEADER = /NEW TRANSACTIONS/
 const END_TX_HEADER = /GRAND TOTAL FOR ALL CARD ACCOUNTS:/
@@ -135,6 +136,21 @@ export default function Home() {
 
       <Show when={result()}>
         {(result) => {
+          const groups = createMemo(() => {
+            const grouped = groupCommonWords(result().txs.map((tx) => tx.desc.toUpperCase()))
+            // convert to array and sort number of indices
+            return Object.entries(grouped)
+              .map(([key, indices]) => {
+                let sum = 0
+                for (const i of indices) {
+                  const num = Number(result().txs[i].amount)
+                  if (isNaN(num)) continue
+                  sum += num
+                }
+                return { key, indices, sum }
+              })
+              .sort((a, b) => b.sum - a.sum)
+          })
           const sum = () =>
             result().txs.reduce((acc, tx) => {
               const num = Number(tx.amount)
@@ -163,10 +179,37 @@ export default function Home() {
                       </tr>
                     </tbody>
                   </table>
+
+                  <table>
+                    <thead>
+                      <tr>
+                        <th colSpan={3}>Summary</th>
+                      </tr>
+                      <tr>
+                        <th>Group</th>
+                        <th>Count</th>
+                        <th>Sum</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <For each={groups()}>
+                        {(group) => (
+                          <tr>
+                            <td>{group.key}</td>
+                            <td>{group.indices.length}</td>
+                            <td>{group.sum.toLocaleString()}</td>
+                          </tr>
+                        )}
+                      </For>
+                    </tbody>
+                  </table>
                 </div>
               </div>
-              <table class="striped">
+              <table>
                 <thead>
+                  <tr>
+                    <th colSpan={3}>Transactions</th>
+                  </tr>
                   <tr>
                     <th>Date</th>
                     <th>Description</th>
