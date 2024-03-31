@@ -1,6 +1,6 @@
 import type { TextItem } from "pdfjs-dist/types/src/display/api"
 import { For, Show, createMemo, createSignal } from "solid-js"
-import { groupCommonWords } from "~/lib/trie"
+import { groupCommonWords } from "~/lib/stats"
 
 const START_TX_HEADER = /NEW TRANSACTIONS/
 const END_TX_HEADER = /GRAND TOTAL FOR ALL CARD ACCOUNTS:/

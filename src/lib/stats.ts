@@ -1,19 +1,15 @@
-class TrieNode {
-  children: Map<string, TrieNode>
-  indices: number[]
+class WordTrieNode {
+  children: Map<string, WordTrieNode> = new Map()
+  indices: number[] = []
 
-  constructor() {
-    this.children = new Map()
-    this.indices = []
-  }
-
-  insert(str: string, i: number) {
-    let node: TrieNode = this
-    for (const char of str) {
-      if (!node.children.has(char)) {
-        node.children.set(char, new TrieNode())
+  insert(str: string, i: number): void {
+    let node: WordTrieNode = this
+    const words = str.split(" ")
+    for (const word of words) {
+      if (!node.children.has(word)) {
+        node.children.set(word, new WordTrieNode())
       }
-      node = node.children.get(char)!
+      node = node.children.get(word)!
       node.indices.push(i)
     }
   }
@@ -24,17 +20,17 @@ class TrieNode {
 
     const indentation = " ".repeat(depth * 2)
 
-    this.children.forEach((child, char) => {
-      result += `${indentation}${char} -> (${child.indices.join(", ")})\n`
-      result += child.visualize(prefix + char, depth + 1)
+    this.children.forEach((child, word) => {
+      result += `${indentation}${word} -> (${child.indices.join(", ")})\n`
+      result += child.visualize(prefix + word + " ", depth + 1)
     })
 
     return result
   }
 
-  static extractGroups(node: TrieNode, prefix: string, strings: string[], groups: GroupMap) {
+  static extractGroups(node: WordTrieNode, prefix: string, strings: string[], groups: GroupMap): void {
     if (node.indices.length === 1 || prefix.endsWith(" ")) {
-      const key = prefix.includes(" ") ? prefix.trim() : strings[node.indices[0]]
+      const key = prefix.trim()
       if (!groups[key]) {
         groups[key] = []
       }
@@ -43,8 +39,8 @@ class TrieNode {
       }
       return
     }
-    for (const [char, child] of node.children) {
-      TrieNode.extractGroups(child, prefix + char, strings, groups)
+    for (const [word, child] of node.children) {
+      WordTrieNode.extractGroups(child, prefix + word + " ", strings, groups)
     }
   }
 }
@@ -52,13 +48,13 @@ class TrieNode {
 type GroupMap = Record<string, number[]>
 
 export function groupCommonWords(strings: string[]): GroupMap {
-  const root = new TrieNode()
+  const root = new WordTrieNode()
   for (let i = 0; i < strings.length; i++) {
     root.insert(strings[i], i)
   }
   // console.log(root.visualize());
 
   const groups: GroupMap = {}
-  TrieNode.extractGroups(root, "", strings, groups)
+  WordTrieNode.extractGroups(root, "", strings, groups)
   return groups
 }
