@@ -1,6 +1,5 @@
 import type { TextItem } from "pdfjs-dist/types/src/display/api"
 import { For, Show, createSignal } from "solid-js"
-import { pdfjs } from "~/lib/pdfjs"
 
 const START_TX_HEADER = /NEW TRANSACTIONS/
 const END_TX_HEADER = /GRAND TOTAL FOR ALL CARD ACCOUNTS:/
@@ -29,8 +28,10 @@ export default function Home() {
   async function convertPdf(formData: FormData) {
     const file = formData.get("file") as File
     console.log("file", file)
+    const { pdfjs } = await import("~/lib/pdfjs")
 
     const doc = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise
+
     console.log("doc", doc.numPages, doc)
 
     let inTxTable = false
@@ -43,11 +44,7 @@ export default function Home() {
       const textContent = (await page.getTextContent().then((content) => content.items)).filter(
         (item): item is TextItem => "str" in item && item.str !== "" && item.str !== " "
       )
-      console.log(
-        "textContent",
-        textContent.map((c) => c.str)
-      )
-
+      
       // walk textContent.items.str to find the start header
       for (let j = 0; j < textContent.length; j++) {
         const item = textContent[j]
