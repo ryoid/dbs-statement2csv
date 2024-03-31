@@ -13,6 +13,17 @@ export default function App() {
           <Meta name="description" content="Convert Credit Card Statement transactions from PDF to CSV" />
 
           <Suspense>{props.children}</Suspense>
+
+          <footer class="container">
+            <span class="opacity-80">Processed on your machine, your data is never uploaded. </span>
+            <a
+              class="text-blue-500 hover:text-blue-600"
+              href="https://github.com/ryoid/dbs-statement2csv"
+              target="_blank"
+            >
+              Source Code
+            </a>
+          </footer>
         </MetaProvider>
       )}
     >

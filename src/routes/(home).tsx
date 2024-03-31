@@ -1,5 +1,5 @@
 import type { TextItem } from "pdfjs-dist/types/src/display/api"
-import { For, Show, createSignal, onMount } from "solid-js"
+import { For, Show, createSignal } from "solid-js"
 import { pdfjs } from "~/lib/pdfjs"
 
 const START_TX_HEADER = /NEW TRANSACTIONS/
@@ -108,9 +108,6 @@ export default function Home() {
 
     setResult({ url, filename: replaceFilenameExt(file.name, ".pdf", ".csv"), txs })
   }
-  onMount(() => {
-    console.log("home")
-  })
   return (
     <main class="container">
       <h1>DBS Statement Converter</h1>
@@ -200,13 +197,6 @@ export default function Home() {
           )
         }}
       </Show>
-
-      <footer>
-        <span class="opacity-80">Processed on your machine, your data is never uploaded. </span>
-        <a class="text-blue-500 hover:text-blue-600" href="https://github.com/ryoid/dbs-statement2csv" target="_blank">
-          Source Code
-        </a>
-      </footer>
     </main>
   )
 }
