@@ -88,7 +88,6 @@ export default function Home() {
           txDesc = null
           continue
         }
-        console.log("current", item.str, "next", nextStr, { txDate, txDesc })
 
         // Collect as strings
         txDesc = txDesc ? txDesc + " " + item.str : item.str
